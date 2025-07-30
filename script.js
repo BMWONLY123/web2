@@ -51,8 +51,8 @@ function showHome() {
 }
 
 // YouTube API Configuration
-const YOUTUBE_API_KEY = 'AIzaSyAmDGZteUr9ef8Z_acIQxAnHRFLPvX0X70'; // Replace with your actual API key
-const CHANNEL_ID = 'kotev_ex'; // Replace with your actual channel ID
+const YOUTUBE_API_KEY = 'AIzaSyAmDGZteUr9ef8Z_acIQxAnHRFLPvX0X70';
+const CHANNEL_ID = 'UCViV_p_-3GXBbkNA5a5k1LQ'; // Direct channel ID
 
 // Load YouTube projects
 async function loadProjects() {
@@ -67,20 +67,23 @@ async function loadProjects() {
     `;
     
     try {
-        // First, get channel ID from username
-        const channelResponse = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&q=kotev_ex&type=channel&key=${YOUTUBE_API_KEY}`);
-        const channelData = await channelResponse.json();
-        
-        let channelId = CHANNEL_ID;
-        if (channelData.items && channelData.items.length > 0) {
-            channelId = channelData.items[0].id.channelId;
-        }
-        
-        // Get videos from channel
-        const videosResponse = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${channelId}&maxResults=12&order=date&type=video&key=${YOUTUBE_API_KEY}`);
+        console.log('Starting to load projects...');
+        // Get videos from channel directly by channel ID
+        const videosResponse = await fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${CHANNEL_ID}&maxResults=12&order=date&type=video&key=${YOUTUBE_API_KEY}`);
         const videosData = await videosResponse.json();
         
+        console.log('Videos response:', videosData);
+        
+        if (videosData.error) {
+            console.error('API Error:', videosData.error);
+            if (videosData.error.code === 403) {
+                throw new Error('Błąd API: Brak uprawnień lub wyczerpany limit zapytań');
+            }
+            throw new Error(`API Error: ${videosData.error.message}`);
+        }
+        
         if (!videosData.items || videosData.items.length === 0) {
+            console.log('No videos found');
             // Show no videos message
             projectsGrid.innerHTML = `
                 <div class="no-videos">
@@ -97,10 +100,22 @@ async function loadProjects() {
             return;
         }
         
+        console.log('Found videos:', videosData.items.length);
+        
         // Get detailed video information including statistics
         const videoIds = videosData.items.map(item => item.id.videoId).join(',');
         const detailsResponse = await fetch(`https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics&id=${videoIds}&key=${YOUTUBE_API_KEY}`);
         const detailsData = await detailsResponse.json();
+        
+        console.log('Video details response:', detailsData);
+        
+        if (detailsData.error) {
+            console.error('API Error:', detailsData.error);
+            if (detailsData.error.code === 403) {
+                throw new Error('Błąd API: Brak uprawnień lub wyczerpany limit zapytań');
+            }
+            throw new Error(`API Error: ${detailsData.error.message}`);
+        }
         
         // Process videos
         const projects = detailsData.items.map(video => {
@@ -117,6 +132,8 @@ async function loadProjects() {
                 date: formatDate(snippet.publishedAt)
             };
         });
+        
+        console.log('Processed projects:', projects);
         
         // Render projects
         projectsGrid.innerHTML = projects.map(project => `
@@ -167,7 +184,8 @@ async function loadProjects() {
                     <i class="fas fa-exclamation-triangle"></i>
                 </div>
                 <h3>Błąd ładowania</h3>
-                <p>Nie udało się załadować filmów z YouTube. Sprawdź połączenie z internetem.</p>
+                <p>Nie udało się załadować filmów z YouTube.</p>
+                <p style="font-size: 0.8rem; margin-top: 1rem; color: #666;">Błąd: ${error.message}</p>
                 <a href="https://www.youtube.com/@kotev_ex" target="_blank" class="btn">
                     <i class="fab fa-youtube"></i> Sprawdź kanał YouTube
                 </a>

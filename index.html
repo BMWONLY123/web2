@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>kotev_exe - Portfolio</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Shooting Stars -->
+    <div class="shooting-star"></div>
+    <div class="shooting-star"></div>
+    <div class="shooting-star"></div>
+
+    <div class="main-content" id="home">
+        <div class="content-block">
+            <h1>kotev_exe's Portfolio</h1>
+            <p class="subtitle">Odkryj moje projekty i umiejętności</p>
+            <a href="#projects" class="btn" id="viewProjectsBtn">Zobacz Projekty</a>
+            <div class="social-links">
+                <a href="https://discord.gg/VFg9UyqYX6" class="social-link" target="_blank"><i class="fab fa-discord"></i></a>
+                <a href="https://github.com/BMWONLY123" class="social-link" target="_blank"><i class="fab fa-github"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Projects Section -->
+    <div class="projects-section" id="projects">
+        <div class="projects-container">
+            <div class="projects-header">
+                <h2>Moje Projekty</h2>
+                <p>Sprawdź moje najnowsze projekty na YouTube</p>
+                <button class="back-btn" id="backBtn">
+                    <i class="fas fa-arrow-left"></i> Back to Home
+                </button>
+            </div>
+            <div class="projects-grid" id="projectsGrid">
+                <!-- Projects will be loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
